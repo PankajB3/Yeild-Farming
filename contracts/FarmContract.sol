@@ -53,5 +53,22 @@ contract FarmContract {
         alreadyStaked[msg.sender] = true;
         emit Stake(msg.sender, amt);
     }   
+
+    function unstake(uint256 amt) public{
+        require(alreadyStaked[msg.sender] == true && stakedBalance[msg.sender] >= amt, "Can't unstake this amount");
+        uint256 yeild = getYeildBalance(msg.sender);
+        uint256 cAmt = amt;
+        stakedBalance[msg.sender] -= cAmt;
+        stakedToken.transfer(msg.sender, cAmt);
+        yeildTokenBalance[msg.sender] += yeild;
+        if(stakedBalance[msg.sender] >0){
+            alreadyStaked[msg.sender] = false;
+        }
+        emit Unstake(msg.sender, cAmt);
+    }
+
+    function withdrawYeild() public{
+        
+    }
     
 }
