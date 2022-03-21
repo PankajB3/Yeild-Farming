@@ -58,6 +58,7 @@ contract FarmContract {
         require(alreadyStaked[msg.sender] == true && stakedBalance[msg.sender] >= amt, "Can't unstake this amount");
         uint256 yeild = getYeildBalance(msg.sender);
         uint256 cAmt = amt;
+        amt = 0;
         stakedBalance[msg.sender] -= cAmt;
         stakedToken.transfer(msg.sender, cAmt);
         yeildTokenBalance[msg.sender] += yeild;
@@ -68,7 +69,14 @@ contract FarmContract {
     }
 
     function withdrawYeild() public{
-        
+        uint256 totalYeild = getYeildBalance(msg.sender);
+        require(stakedBalance[msg.sender]>0 || totalYeild >0, "Nothing to Withdraw.");
+        if(yeildTokenBalance[msg.sender] != 0){
+            uint256 bal = yeildTokenBalance[msg.sender];
+            yeildTokenBalance[msg.sender] = 0;
+            totalYeild += bal;
+        }
+        emit YieldWithdraw(msg.sender, totalYeild);
     }
     
 }
